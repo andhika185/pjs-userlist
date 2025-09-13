@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import com.andhika185.userlists.domain.model.User
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.font.FontStyle
 
 @Composable
 fun UserListScreen(viewModel: UserListViewModel = koinViewModel(), onUserClick: (Int) -> Unit)
@@ -77,6 +78,9 @@ fun UserListItem(user: User, onUserClick: (Int) -> Unit) {
         else -> Color(0xFFFF9800) // Orange
     }
 
+    // Tentukan warna teks yang kontras
+    val contentColor = if (user.age in 31..40) Color.Black else Color.White
+
     Card(
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
@@ -103,9 +107,21 @@ fun UserListItem(user: User, onUserClick: (Int) -> Unit) {
                 Text(
                     text = "${user.firstName} ${user.lastName}",
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
+                    color = contentColor // Gunakan warna kontras
                 )
-                Text(text = "Age: ${user.age}", fontSize = 14.sp)
+                Text(
+                    text = "Age: ${user.age}",
+                    fontSize = 14.sp,
+                    color = contentColor.copy(alpha = 0.8f) // Sedikit transparan
+                )
+                // TAMBAHKAN Text ini untuk menampilkan jabatan
+                Text(
+                    text = user.companyTitle,
+                    fontSize = 14.sp,
+                    fontStyle = FontStyle.Italic, // Gaya miring agar terlihat seperti jabatan
+                    color = contentColor.copy(alpha = 0.8f)
+                )
             }
         }
     }
