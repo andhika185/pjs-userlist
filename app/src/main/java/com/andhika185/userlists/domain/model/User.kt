@@ -5,5 +5,11 @@ data class User(
     val firstName: String,
     val lastName: String,
     val age: Int,
-    val imageUrl: String
+    val imageUrl: String,
+    // Properti baru
+    val birthDate: String,
+    val phone: String,
+    val email: String,
+    val companyName: String,
+    val companyTitle: String
 )

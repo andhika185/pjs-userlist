@@ -2,6 +2,8 @@ package com.andhika185.userlists.presentation.detail
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.*
@@ -11,10 +13,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.material.icons.filled.Business
+import androidx.compose.material.icons.filled.Cake
+import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Phone
+import androidx.compose.material.icons.filled.Work
 import coil.compose.AsyncImage
 import com.andhika185.userlists.domain.model.User
 import org.koin.androidx.compose.koinViewModel
@@ -42,8 +51,7 @@ fun UserDetailScreen(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(paddingValues)
-                .padding(16.dp),
+                .padding(paddingValues),
             contentAlignment = Alignment.Center
         ) {
             when (val currentState = state) {
@@ -58,8 +66,11 @@ fun UserDetailScreen(
 @Composable
 fun UserDetailContent(user: User) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+        modifier = Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState()) // Agar bisa di-scroll jika konten panjang
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         AsyncImage(
             model = user.imageUrl,
@@ -69,15 +80,46 @@ fun UserDetailContent(user: User) {
                 .clip(CircleShape),
             contentScale = ContentScale.Crop
         )
+        Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "${user.firstName} ${user.lastName}",
-            fontSize = 24.sp,
+            style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold
         )
         Text(
             text = "Age: ${user.age}",
-            fontSize = 20.sp
+            style = MaterialTheme.typography.titleMedium
         )
-        // Anda bisa menambahkan detail lain di sini jika mau
+        Spacer(modifier = Modifier.height(24.dp))
+
+        // Detail Section
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalAlignment = Alignment.Start
+        ) {
+            DetailItemRow(icon = Icons.Default.Email, text = user.email)
+            DetailItemRow(icon = Icons.Default.Phone, text = user.phone)
+            DetailItemRow(icon = Icons.Default.Cake, text = user.birthDate)
+            Divider(modifier = Modifier.padding(vertical = 8.dp))
+            DetailItemRow(icon = Icons.Default.Business, text = user.companyName)
+            DetailItemRow(icon = Icons.Default.Work, text = user.companyTitle)
+        }
+    }
+}
+
+@Composable
+private fun DetailItemRow(icon: ImageVector, text: String) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(vertical = 8.dp)
+    ) {
+        Icon(
+            imageVector = icon,
+            contentDescription = null,
+            tint = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.size(24.dp)
+        )
+        Spacer(modifier = Modifier.width(16.dp))
+        Text(text = text, style = MaterialTheme.typography.bodyLarge)
     }
 }

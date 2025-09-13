@@ -17,5 +17,21 @@ data class UserDto(
     @SerializedName("age")
     val age: Int,
     @SerializedName("image")
-    val image: String
+    val image: String,
+    // Field baru
+    @SerializedName("birthDate")
+    val birthDate: String,
+    @SerializedName("phone")
+    val phone: String,
+    @SerializedName("email")
+    val email: String,
+    @SerializedName("company")
+    val company: CompanyDto
+)
+
+data class CompanyDto(
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("title")
+    val title: String
 )
