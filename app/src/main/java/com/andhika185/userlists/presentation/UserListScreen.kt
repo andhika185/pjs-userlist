@@ -30,6 +30,11 @@ import androidx.compose.material.icons.Icons // Import baru
 import androidx.compose.material.icons.filled.Search // Import baru
 import androidx.compose.material3.Icon // Import baru
 import androidx.compose.material3.OutlinedTextField // Import baru
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.material.icons.filled.ArrowDownward
+import androidx.compose.material.icons.filled.ArrowUpward
+import androidx.compose.material3.IconToggleButton
 
 @Composable
 fun UserListScreen(
@@ -37,26 +42,63 @@ fun UserListScreen(
     onUserClick: (Int) -> Unit
 ) {
     val state by viewModel.state.collectAsState()
-    val searchQuery by viewModel.searchQuery.collectAsState() // Ambil state query
+    val searchQuery by viewModel.searchQuery.collectAsState()
+    val sortOrder by viewModel.sortOrder.collectAsState() // Ambil state sort order
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        Column(modifier = Modifier.fillMaxSize()) { // Bungkus dengan Column
+        Column(modifier = Modifier.fillMaxSize()) {
             // Search Bar
             OutlinedTextField(
                 value = searchQuery,
-                onValueChange = viewModel::onSearchQueryChanged, // Panggil fungsi di ViewModel
+                onValueChange = viewModel::onSearchQueryChanged,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(16.dp),
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp),
                 label = { Text("Search by Name") },
                 leadingIcon = {
                     Icon(Icons.Default.Search, contentDescription = "Search Icon")
                 },
                 singleLine = true
             )
+
+            // Sort Controls
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.End // Posisikan di kanan
+            ) {
+                Text("Sort by name:", style = MaterialTheme.typography.bodySmall)
+                Spacer(modifier = Modifier.width(8.dp))
+
+                // Tombol Ascending (A-Z)
+                IconToggleButton(
+                    checked = sortOrder == SortOrder.ASCENDING,
+                    onCheckedChange = { viewModel.onSortOrderChanged(SortOrder.ASCENDING) }
+                ) {
+                    Icon(
+                        Icons.Default.ArrowUpward,
+                        contentDescription = "Sort Ascending",
+                        tint = if (sortOrder == SortOrder.ASCENDING) MaterialTheme.colorScheme.primary else Color.Gray
+                    )
+                }
+
+                // Tombol Descending (Z-A)
+                IconToggleButton(
+                    checked = sortOrder == SortOrder.DESCENDING,
+                    onCheckedChange = { viewModel.onSortOrderChanged(SortOrder.DESCENDING) }
+                ) {
+                    Icon(
+                        Icons.Default.ArrowDownward,
+                        contentDescription = "Sort Descending",
+                        tint = if (sortOrder == SortOrder.DESCENDING) MaterialTheme.colorScheme.primary else Color.Gray
+                    )
+                }
+            }
 
             // Tampilkan konten berdasarkan state
             when (val currentState = state) {
