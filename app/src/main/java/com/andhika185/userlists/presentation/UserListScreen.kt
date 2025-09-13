@@ -25,28 +25,53 @@ import com.andhika185.userlists.domain.model.User
 import org.koin.androidx.compose.koinViewModel
 import androidx.compose.foundation.clickable
 import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.foundation.layout.Column // Import baru
+import androidx.compose.material.icons.Icons // Import baru
+import androidx.compose.material.icons.filled.Search // Import baru
+import androidx.compose.material3.Icon // Import baru
+import androidx.compose.material3.OutlinedTextField // Import baru
 
 @Composable
-fun UserListScreen(viewModel: UserListViewModel = koinViewModel(), onUserClick: (Int) -> Unit)
-{
+fun UserListScreen(
+    viewModel: UserListViewModel = koinViewModel(),
+    onUserClick: (Int) -> Unit
+) {
     val state by viewModel.state.collectAsState()
+    val searchQuery by viewModel.searchQuery.collectAsState() // Ambil state query
 
     Surface(
         modifier = Modifier.fillMaxSize(),
         color = MaterialTheme.colorScheme.background
     ) {
-        when (val currentState = state) {
-            is UserListState.Loading -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
+        Column(modifier = Modifier.fillMaxSize()) { // Bungkus dengan Column
+            // Search Bar
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = viewModel::onSearchQueryChanged, // Panggil fungsi di ViewModel
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                label = { Text("Search by Name") },
+                leadingIcon = {
+                    Icon(Icons.Default.Search, contentDescription = "Search Icon")
+                },
+                singleLine = true
+            )
+
+            // Tampilkan konten berdasarkan state
+            when (val currentState = state) {
+                is UserListState.Loading -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
+                    }
                 }
-            }
-            is UserListState.Success -> {
-                UserList(users = currentState.users, onUserClick = onUserClick)
-            }
-            is UserListState.Error -> {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "Error: ${currentState.message}", color = Color.Red)
+                is UserListState.Success -> {
+                    UserList(users = currentState.users, onUserClick = onUserClick)
+                }
+                is UserListState.Error -> {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(text = "Error: ${currentState.message}", color = Color.Red)
+                    }
                 }
             }
         }
